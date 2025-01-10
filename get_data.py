@@ -1,29 +1,34 @@
 import numpy as np
-import librosa
+import scipy.io.wavfile as wav
 import matplotlib.pyplot as plt
+from scipy.fftpack import fft
 
 # Load the audio file
-audio_path = 'C:/Users/jodim/Documents/Connor_Coding/audio_visualizer/Alan Walker - Dreamer [NCS Release].mp3'
-y, sr = librosa.load(audio_path, sr=None)
+audio_path = 'path_to_your_audio_file.wav'
+sample_rate, audio_data = wav.read(audio_path)
 
-# Define the number of frequency bands (bins)
-n_fft = 2048  # Number of FFT components
-hop_length = 512  # Number of samples between successive frames
+# If the audio data has two channels (stereo), convert it to mono by averaging the channels
+if audio_data.ndim > 1:
+    audio_data = np.mean(audio_data, axis=1)
 
-# Compute the Short-Time Fourier Transform (STFT)
-stft = np.abs(librosa.stft(y, n_fft=n_fft, hop_length=hop_length))
+# Define the number of samples for the FFT and the time point to analyze
+n_samples = 2048  # Number of samples for FFT
+time_point = 1.0  # Time point in seconds
 
-# Convert the STFT to dB scale
-db_stft = librosa.amplitude_to_db(stft, ref=np.max)
+# Get the audio data segment at the specified time point
+start_sample = int(time_point * sample_rate)
+end_sample = start_sample + n_samples
+audio_segment = audio_data[start_sample:end_sample]
 
-# Get the amplitude of each frequency band at a given frame (time point)
-frame = 100  # Example frame index
-amplitude = db_stft[:, frame]
+# Perform FFT to get the frequency spectrum
+freq_spectrum = np.abs(fft(audio_segment))
 
-# Plot the amplitude of each frequency band at the given frame
-freqs = librosa.fft_frequencies(sr=sr, n_fft=n_fft)
-plt.plot(freqs, amplitude)
+# Get the frequencies corresponding to the FFT result
+freqs = np.fft.fftfreq(n_samples, 1/sample_rate)
+
+# Plot the amplitude of each frequency band
+plt.plot(freqs[:n_samples//2], freq_spectrum[:n_samples//2])
 plt.xlabel('Frequency (Hz)')
-plt.ylabel('Amplitude (dB)')
-plt.title('Frequency Spectrum at Frame {}'.format(frame))
+plt.ylabel('Amplitude')
+plt.title('Frequency Spectrum at {:.2f} seconds'.format(time_point))
 plt.show()
