@@ -10,8 +10,7 @@ def convert_to_wav(audio_path):
     audio.export("temp_audio.wav", format="wav")
 
 # Convert the audio file to WAV format
-audio_path = 'path_to_your_audio_file'
-convert_to_wav(audio_path)
+convert_to_wav("/Users/westcoast/Music/Connor_mp3s/Portal2-03-999999.mp3")
 
 # Load the converted WAV file
 sample_rate, audio_data = wav.read("temp_audio.wav")
