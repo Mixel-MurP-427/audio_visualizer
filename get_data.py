@@ -25,7 +25,7 @@ if audio_data.ndim > 1:
 
 # Define the number of samples for the FFT and the time point to analyze
 n_samples = 128  # Number of samples for FFT. Other parts of the code are hotwired to just use the value 128.
-time_point = 2.0  # Time point in seconds
+time_point = 14.0  # Time point in seconds
 
 # Get the audio data segment at the specified time point
 start_sample = int(time_point * sample_rate)
@@ -41,8 +41,12 @@ freqs = np.fft.fftfreq(n_samples, 1/sample_rate)
 freq_spectrum = freq_spectrum[:n_samples//2]
 freqs = freqs[:n_samples//2]
 
-#print(freqs)
-#print(freq_spectrum)
+# Plot the amplitude of each frequency band
+plt.plot(freqs, freq_spectrum)
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('Amplitude')
+plt.title('Frequency Spectrum at {:.2f} seconds'.format(time_point))
+plt.show()
 
 
 def process_freqs(pfFreqs):
@@ -67,12 +71,3 @@ def process_freqs(pfFreqs):
     myImage.save("audio_spectrum.png", "PNG")
 
 process_freqs(freq_spectrum)
-
-
-
-# Plot the amplitude of each frequency band
-plt.plot(freqs, freq_spectrum)
-plt.xlabel('Frequency (Hz)')
-plt.ylabel('Amplitude')
-plt.title('Frequency Spectrum at {:.2f} seconds'.format(time_point))
-plt.show()
